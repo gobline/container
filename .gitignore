@@ -1,0 +1,6 @@
+docs/
+vendor/
+tests/resources/
+apigen.neon
+composer.lock
+phpunit.xml
