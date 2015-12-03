@@ -4,3 +4,5 @@ tests/resources/
 apigen.neon
 composer.lock
 phpunit.xml
+.php_cs
+.php_cs.cache

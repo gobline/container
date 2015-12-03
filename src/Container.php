@@ -35,6 +35,7 @@ class Container implements ContainerInterface
             if (isset($this->alias[$className])) {
                 return $this->get($this->alias[$className]);
             }
+
             return $this->injector->create($className);
         }
 
@@ -97,6 +98,7 @@ class Container implements ContainerInterface
             if (!is_callable($service)) {
                 return $callable($service, $c);
             }
+
             return $callable($service($c), $c);
         };
 
@@ -125,11 +127,19 @@ class Container implements ContainerInterface
 
                     $consecutiveKeys = function ($keys) {
                         $nb = count($keys);
-                        if ($nb === 0) return true;
-                        if (!isset($keys[0])) return false;
-                        for ($i = 0; $i < $nb; $i++) {
-                            if (!isset($keys[$i+1])) return true;
-                            if ($keys[$i]+1 !== $keys[$i+1]) return false;
+                        if ($nb === 0) {
+                            return true;
+                        }
+                        if (!isset($keys[0])) {
+                            return false;
+                        }
+                        for ($i = 0; $i < $nb; ++$i) {
+                            if (!isset($keys[$i + 1])) {
+                                return true;
+                            }
+                            if ($keys[$i] + 1 !== $keys[$i + 1]) {
+                                return false;
+                            }
                         }
                     };
                     if (!$consecutiveKeys($posArguments)) {
