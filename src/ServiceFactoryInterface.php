@@ -16,5 +16,5 @@ namespace Gobline\Container;
  */
 interface ServiceFactoryInterface
 {
-    public function create(ContainerInterface $container, array $arguments = []);
+    public function create();
 }

@@ -16,5 +16,5 @@ namespace Gobline\Container;
  */
 interface ServiceConfiguratorInterface
 {
-    public function configure($service, array $config, ContainerInterface $container);
+    public function configure($service, array $config);
 }
