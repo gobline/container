@@ -19,8 +19,7 @@
         }
     },
     "require": {
-        "php": ">=5.6.0",
-        "gobline/injector": "~2.0"
+        "php": ">=5.6.0"
     },
     "extra": {
         "branch-alias": {

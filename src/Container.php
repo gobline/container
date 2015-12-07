@@ -18,16 +18,10 @@ use Gobline\Injector\TypeHintDependencyInjector;
  */
 class Container implements ContainerInterface
 {
-    private $injector;
     private $services = [];
     private $factories = [];
     private $initialized = [];
     private $alias = [];
-
-    public function __construct()
-    {
-        $this->injector = new TypeHintDependencyInjector([$this, 'get']);
-    }
 
     public function get($className)
     {
@@ -36,7 +30,7 @@ class Container implements ContainerInterface
                 return $this->get($this->alias[$className]);
             }
 
-            return $this->injector->create($className);
+            return $this->createInstance($className);
         }
 
         if (
@@ -121,7 +115,22 @@ class Container implements ContainerInterface
     private function createInstance($className, array $arguments = null)
     {
         if ($arguments === null) {
-            return $this->injector->create($className);
+            if (!method_exists($className, '__construct')) {
+                return new $className();
+            }
+
+            $method = new \ReflectionMethod($className, '__construct');
+            $parameters = $method->getParameters();
+            $arguments = [];
+
+            foreach ($parameters as $parameter) {
+                if (!isset($parameter->getClass()->name)) {
+                    break;
+                }
+                $arguments[] = $this->get($parameter->getClass()->name);
+            }
+
+            return new $className(...$arguments);
         }
 
         if (!$arguments) {
