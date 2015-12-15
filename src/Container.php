@@ -161,6 +161,10 @@ class Container implements ContainerInterface
 
     public function delegate($className, $factoryClassNameOrObject, array $arguments = null, $shared = true)
     {
+        if (isset($this->initialized[$className])) {
+            throw new \RuntimeException('Cannot override initialized service '.$className);
+        }
+
         if (is_string($factoryClassNameOrObject)) {
             $value = function ($c) use ($factoryClassNameOrObject, $arguments) {
                 $factory = $this->createInstance($factoryClassNameOrObject, $arguments);
@@ -171,10 +175,6 @@ class Container implements ContainerInterface
             $value = function ($c) use ($factoryClassNameOrObject) {
                 return $factoryClassNameOrObject->create();
             };
-        }
-
-        if (isset($this->initialized[$className])) {
-            throw new \RuntimeException('Cannot override initialized service '.$className);
         }
 
         $this->services[$className] = $value;
@@ -188,6 +188,10 @@ class Container implements ContainerInterface
 
     public function configure($className, $configurator = null, array $config = [])
     {
+        if (isset($this->initialized[$className])) {
+            throw new \RuntimeException('Cannot configure initialized service '.$className);
+        }
+
         if (!$configurator) {
             $callable = function ($service, $c) use ($className, $config) {
                 foreach ($config as $name => $value) {
@@ -223,6 +227,10 @@ class Container implements ContainerInterface
     {
         if (!isset($this->services[$className])) {
             throw new \InvalidArgumentException('Service '.$className.' is not defined');
+        }
+
+        if (isset($this->initialized[$className])) {
+            throw new \RuntimeException('Cannot extend initialized service '.$className);
         }
 
         $service = $this->services[$className];
