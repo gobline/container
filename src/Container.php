@@ -137,16 +137,23 @@ class Container implements ContainerInterface
             return new $className();
         }
 
-        $positions = array_keys($arguments, '?');
+        $consecutive = is_array(json_decode(json_encode($arguments)));
 
-        if ($positions) {
+        if (!$consecutive) {
             $method = new \ReflectionMethod($className, '__construct');
             $parameters = $method->getParameters();
 
-            foreach ($positions as $position) {
-                $parameter = $parameters[$position];
-                $arguments[$position] = $this->get($parameter->getClass()->name);
+            $max = max(array_keys($arguments));
+
+            for ($i = 0; $i < $max; ++$i) {
+                if (isset($arguments[$i])) {
+                    continue;
+                }
+
+                $parameter = $parameters[$i];
+                $arguments[$i] = $this->get($parameter->getClass()->name);
             }
+            ksort($arguments);
         }
 
         return new $className(...$arguments);
